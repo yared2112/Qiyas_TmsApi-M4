@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace TmsApi;
 
+// Standard custom exception wrapper used for simulating database infrastructure failures
+public class TmsDatabaseException(string message) : Exception(message);
+
 // 1. Structural Business Contract
 public interface IEnrollmentService
 {

@@ -6,12 +6,18 @@ E:\Qiyas\TmsApi\bin\Debug\net10.0\TmsApi.deps.json
 E:\Qiyas\TmsApi\bin\Debug\net10.0\TmsApi.runtimeconfig.json
 E:\Qiyas\TmsApi\bin\Debug\net10.0\TmsApi.dll
 E:\Qiyas\TmsApi\bin\Debug\net10.0\TmsApi.pdb
+E:\Qiyas\TmsApi\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll
+E:\Qiyas\TmsApi\bin\Debug\net10.0\Microsoft.OpenApi.dll
+E:\Qiyas\TmsApi\bin\Debug\net10.0\Scalar.AspNetCore.dll
+E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.csproj.AssemblyReference.cache
 E:\Qiyas\TmsApi\obj\Debug\net10.0\rpswa.dswa.cache.json
 E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.GeneratedMSBuildEditorConfig.editorconfig
 E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.AssemblyInfoInputs.cache
 E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.AssemblyInfo.cs
 E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.csproj.CoreCompileInputs.cache
+E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.MvcApplicationPartsAssemblyInfo.cs
 E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.MvcApplicationPartsAssemblyInfo.cache
+E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.sourcelink.json
 E:\Qiyas\TmsApi\obj\Debug\net10.0\rjimswa.dswa.cache.json
 E:\Qiyas\TmsApi\obj\Debug\net10.0\rjsmrazor.dswa.cache.json
 E:\Qiyas\TmsApi\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
@@ -21,6 +27,7 @@ E:\Qiyas\TmsApi\obj\Debug\net10.0\staticwebassets.build.json.cache
 E:\Qiyas\TmsApi\obj\Debug\net10.0\staticwebassets.development.json
 E:\Qiyas\TmsApi\obj\Debug\net10.0\staticwebassets.build.endpoints.json
 E:\Qiyas\TmsApi\obj\Debug\net10.0\swae.build.ex.cache
+E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.csproj.Up2Date
 E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.dll
 E:\Qiyas\TmsApi\obj\Debug\net10.0\refint\TmsApi.dll
 E:\Qiyas\TmsApi\obj\Debug\net10.0\TmsApi.pdb
