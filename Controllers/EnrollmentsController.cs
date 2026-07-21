@@ -9,7 +9,7 @@ namespace TmsApi.Controllers;
 [AllowAnonymous]
 public class EnrollmentsController(IEnrollmentService enrollmentService) : ControllerBase
 {
-    // 🚨 FIXED: Placed safely inside the class block boundary 🚨
+    // FIXED: Placed safely inside the class block boundary
     // GET /api/enrollments/error -> Intentionally crashes to test 500 ProblemDetails
     [HttpGet("error")]
     public IActionResult TriggerError()

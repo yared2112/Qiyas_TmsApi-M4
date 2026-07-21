@@ -37,7 +37,7 @@ public class EnrollmentService : IEnrollmentService
 
         if (existing is not null)
         {
-            // 🚨 LOG LEVEL: Warning - Unexpected but recoverable business workflow condition
+            //  LOG LEVEL: Warning - Unexpected but recoverable business workflow condition
             _logger.LogWarning(
                 "Duplicate enrollment attempt {StudentId} already in {CourseCode} (record {EnrollmentId})",
                 studentId, courseCode, existing.Id);
@@ -49,7 +49,7 @@ public class EnrollmentService : IEnrollmentService
         var record = new EnrollmentRecord(id, studentId, courseCode, DateTime.UtcNow);
         _store[id] = record;
 
-        // 🚨 LOG LEVEL: Information - A successful system transaction occurred
+        //  LOG LEVEL: Information - A successful system transaction occurred
         _logger.LogInformation("Enrolled {StudentId} in {CourseCode} record {EnrollmentId}",
             studentId, courseCode, id);
 
@@ -62,7 +62,7 @@ public class EnrollmentService : IEnrollmentService
 
         if (record is null)
         {
-            // 🚨 LOG LEVEL: Warning - Target lookups that return null states should be flagged for auditing
+            //  LOG LEVEL: Warning - Target lookups that return null states should be flagged for auditing
             _logger.LogWarning("Enrollment {EnrollmentId} not found", id);
         }
 
@@ -81,12 +81,12 @@ public class EnrollmentService : IEnrollmentService
 
         if (removed)
         {
-            // 🚨 LOG LEVEL: Information - State destruction completed successfully
+            //  LOG LEVEL: Information - State destruction completed successfully
             _logger.LogInformation("Deleted enrollment {EnrollmentId}", id);
         }
         else
         {
-            // 🚨 LOG LEVEL: Warning - Attempted deletion on an unresolvable domain entity
+            //  LOG LEVEL: Warning - Attempted deletion on an unresolvable domain entity
             _logger.LogWarning("Delete failed enrollment {EnrollmentId} not found", id);
         }
 
