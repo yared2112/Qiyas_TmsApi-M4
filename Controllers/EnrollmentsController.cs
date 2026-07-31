@@ -1,64 +1,52 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TmsApi.Entities;
+using TmsApi.Dtos;
+using TmsApi.Services;
 
 namespace TmsApi.Controllers
 {
     [ApiController]
-    [Route("api/enrollments")]
-    [AllowAnonymous]
+    [Route("api/courses/{courseId:int}/enrollments")]
     public class EnrollmentsController : ControllerBase
     {
+        private readonly ICourseService _courseService;
         private readonly IEnrollmentService _enrollmentService;
 
-        public EnrollmentsController(IEnrollmentService enrollmentService)
+        public EnrollmentsController(ICourseService courseService, IEnrollmentService enrollmentService)
         {
+            _courseService = courseService;
             _enrollmentService = enrollmentService;
         }
 
-        // GET /api/enrollments/error -> Intentionally crashes to test 500 ProblemDetails
-        [HttpGet("error")]
-        public IActionResult TriggerError()
+
+        [HttpGet("{id:int}", Name = nameof(GetEnrollment))]
+        public async Task<IActionResult> GetEnrollment(int courseId, int id, CancellationToken ct)
         {
-            throw new TmsDatabaseException("Simulated database failure for ProblemDetails testing");
+            var enrollment = await _enrollmentService.GetByIdAsync(courseId, id, ct);
+            return enrollment is not null ? Ok(enrollment) : NotFound();
         }
 
-        // GET /api/enrollments -> Returns 200 OK with all records
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var enrollments = await _enrollmentService.GetAllAsync();
-            return Ok(enrollments);
-        }
-
-        // GET /api/enrollments/{id} -> Returns 200 OK or 404 Not Found
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var record = await _enrollmentService.GetByIdAsync(id);
-            return record is not null ? Ok(record) : NotFound();
-        }
-
-        // POST /api/enrollments -> Creates entity and yields 201 Created with Location header
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateEnrollmentRequest request)
+        public async Task<IActionResult> EnrollStudent(int courseId, EnrollStudentRequest request, CancellationToken ct)
         {
-            var record = await _enrollmentService.EnrollAsync(request.StudentId, request.CourseId);
+            // Check if the course exists in the parent table
+            var course = await _courseService.GetByIdAsync(courseId, ct);
+            if (course is null) return NotFound();
 
-            // Generates an HTTP response with a 201 status and auto-computes the outbound URI location
-            return CreatedAtAction(nameof(GetById), new { id = record.Id }, record);
+            // Check if the course is full capacity before enrolling the student    
+            if (course.EnrollmentCount >= course.MaxCapacity)
+            {
+                return Conflict(new ProblemDetails
+                {
+                    Title = "Course is full",
+                    Detail = $"Course '{course.Title}' has reached its maximum capacity of {course.MaxCapacity}.",
+                    Status = StatusCodes.Status409Conflict
+                });
+            }
+
+            // Proceed to enroll the student
+            var enrollment = await _enrollmentService.CreateAsync(courseId, request, ct);
+            return CreatedAtAction(nameof(GetEnrollment), new { courseId, id = enrollment.Id }, enrollment);
         }
 
-        // DELETE /api/enrollments/{id} -> Returns 204 No Content or 404 Not Found
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var deleted = await _enrollmentService.DeleteAsync(id);
-            return deleted ? NoContent() : NotFound();
-        }
     }
-
-    // Data Transfer Object (DTO) for handling client creation body data payloads
-    public record CreateEnrollmentRequest(int StudentId, int CourseId);
 }

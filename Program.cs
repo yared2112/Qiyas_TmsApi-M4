@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using TmsApi.Data;
+using TmsApi.Services;
 using TmsApi;
 
 
@@ -11,7 +12,11 @@ builder.Services.AddDbContext<TmsDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("TmsDb")));
 
 // 2. Register EnrollmentService
-builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+builder.Services.AddScoped<TmsApi.Services.IEnrollmentService, TmsApi.Services.EnrollmentService>();
+
+
+// 2. Register CourseService
+builder.Services.AddScoped<ICourseService, CourseService>();
 
 // 3. Add controllers if you’re using MVC
 builder.Services.AddControllers();
@@ -30,7 +35,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// 4. Configure middleware (optional extras)
+// Enable swagger and developer exception page in development environment
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -51,30 +56,30 @@ app.MapControllers(); // If using MVC controllers
 app.MapGet("/", () => "TMS API is running");
 
 // Get all enrollments
-app.MapGet("/enrollments", async (IEnrollmentService service) =>
-{
-    return await service.GetAllAsync();
-});
+// app.MapGet("/enrollments", async (IEnrollmentServices service) =>
+// {
+//     return await service.GetAllAsync();
+// });
 
-// Get enrollment by Id
-app.MapGet("/enrollments/{id:int}", async (int id, IEnrollmentService service) =>
-{
-    var record = await service.GetByIdAsync(id);
-    return record is not null ? Results.Ok(record) : Results.NotFound();
-});
+// // Get enrollment by Id
+// app.MapGet("/enrollments/{id:int}", async (int id, IEnrollmentServices service) =>
+// {
+//     var record = await service.GetByIdAsync(id);
+//     return record is not null ? Results.Ok(record) : Results.NotFound();
+// });
 
-// Enroll a student in a course
-app.MapPost("/enrollments", async (int studentId, int courseCode, IEnrollmentService service) =>
-{
-    var record = await service.EnrollAsync(studentId, courseCode); // Parse studentId, courseCode);
-    return Results.Created($"/enrollments/{record.Id}", record);
-});
+// // Enroll a student in a course
+// app.MapPost("/enrollments", async (int studentId, int courseCode, IEnrollmentServices service) =>
+// {
+//     var record = await service.EnrollAsync(studentId, courseCode); // Parse studentId, courseCode);
+//     return Results.Created($"/enrollments/{record.Id}", record);
+// });
 
-// Delete enrollment
-app.MapDelete("/enrollments/{id:int}", async (int id, IEnrollmentService service) =>
-{
-    var success = await service.DeleteAsync(id);
-    return success ? Results.Ok() : Results.NotFound();
-});
+// // Delete enrollment
+// app.MapDelete("/enrollments/{id:int}", async (int id, IEnrollmentServices service) =>
+// {
+//     var success = await service.DeleteAsync(id);
+//     return success ? Results.Ok() : Results.NotFound();
+// });
 
 app.Run();
