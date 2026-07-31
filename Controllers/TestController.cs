@@ -129,4 +129,34 @@ public class TestController : ControllerBase
 
         return Ok(list);
     }
+
+    // paged list of students
+    [HttpGet("students-paged")]
+    public async Task<IActionResult> GetStudentsPaged(int page = 1, CancellationToken ct = default)
+    {
+        const int pageSize = 20;
+
+        var students = await _context.Students
+            .OrderBy(s => s.Name) // stable sort
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(ct);
+
+        return Ok(students);
+    }
+
+    // Top 5 Courses by Enrollment Count
+    [HttpGet("top-courses-summary")]
+    public async Task<IActionResult> GetTopCoursesSummary(CancellationToken ct = default)
+    {
+        var courses = await _context.Enrollments
+            .GroupBy(e => e.Course.Title)
+            .Select(g => new { Course = g.Key, EnrollmentCount = g.Count() })
+            .OrderByDescending(x => x.EnrollmentCount)
+            .Take(5)
+            .ToListAsync(ct);
+
+        return Ok(courses);
+    }
+
 }

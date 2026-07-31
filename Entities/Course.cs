@@ -3,9 +3,9 @@ namespace TmsApi.Entities;
 public class Course
 {
     public int Id { get; set; }
-    public string Code { get; set; } = null!;
-    public string Title { get; set; } = null!;
-    public int Capacity { get; set; }
+    public required string Code { get; set; } = string.Empty;
+    public required string Title { get; set; } = string.Empty;
+    public int MaxCapacity { get; set; }
 
     public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     public ICollection<Assessment> Assessments { get; set; } = new List<Assessment>();

@@ -1,102 +1,106 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using TmsApi.Data;
+using TmsApi.Entities;
 
-namespace TmsApi;
-
-// Standard custom exception wrapper used for simulating database infrastructure failures
-public class TmsDatabaseException(string message) : Exception(message);
-
-// 1. Structural Business Contract
-public interface IEnrollmentService
+namespace TmsApi
 {
-    Task<EnrollmentRecord> EnrollAsync(string studentId, string courseCode);
-    Task<EnrollmentRecord?> GetByIdAsync(string id);
-    Task<IReadOnlyList<EnrollmentRecord>> GetAllAsync();
-    Task<bool> DeleteAsync(string id);
-}
+    // Custom exception wrapper for simulating database infrastructure failures
+    public class TmsDatabaseException(string message) : Exception(message);
 
-// 2. State-holding In-Memory Processing Implementation
-public class EnrollmentService : IEnrollmentService
-{
-    private readonly Dictionary<string, EnrollmentRecord> _store = new();
-    private readonly ILogger<EnrollmentService> _logger;
-
-    public EnrollmentService(ILogger<EnrollmentService> logger)
+    // 1. Structural Business Contract
+    public interface IEnrollmentService
     {
-        _logger = logger;
+        Task<Enrollment> EnrollAsync(int studentId, int courseId);
+        Task<Enrollment?> GetByIdAsync(int id);
+        Task<IReadOnlyList<Enrollment>> GetAllAsync();
+        Task<bool> DeleteAsync(int id);
     }
 
-    public Task<EnrollmentRecord> EnrollAsync(string studentId, string courseCode)
+    // 2. EF Core Implementation
+    public class EnrollmentService : IEnrollmentService
     {
-        // 1. Audit Check: Intercept duplicate enrollment attempts
-        var existing = _store.Values
-            .FirstOrDefault(e => e.StudentId == studentId && e.CourseCode == courseCode);
+        private readonly TmsDbContext _context;
+        private readonly ILogger<EnrollmentService> _logger;
 
-        if (existing is not null)
+        public EnrollmentService(TmsDbContext context, ILogger<EnrollmentService> logger)
         {
-            //  LOG LEVEL: Warning - Unexpected but recoverable business workflow condition
-            _logger.LogWarning(
-                "Duplicate enrollment attempt {StudentId} already in {CourseCode} (record {EnrollmentId})",
-                studentId, courseCode, existing.Id);
-
-            return Task.FromResult(existing);
+            _context = context;
+            _logger = logger;
         }
 
-        var id = Guid.NewGuid().ToString("N")[..8];
-        var record = new EnrollmentRecord(id, studentId, courseCode, DateTime.UtcNow);
-        _store[id] = record;
-
-        //  LOG LEVEL: Information - A successful system transaction occurred
-        _logger.LogInformation("Enrolled {StudentId} in {CourseCode} record {EnrollmentId}",
-            studentId, courseCode, id);
-
-        return Task.FromResult(record);
-    }
-
-    public Task<EnrollmentRecord?> GetByIdAsync(string id)
-    {
-        _store.TryGetValue(id, out var record);
-
-        if (record is null)
+        public async Task<Enrollment> EnrollAsync(int studentId, int courseId)
         {
-            //  LOG LEVEL: Warning - Target lookups that return null states should be flagged for auditing
-            _logger.LogWarning("Enrollment {EnrollmentId} not found", id);
+            // Check for duplicate enrollment
+            var existing = await _context.Enrollments
+                .FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == courseId);
+
+            if (existing is not null)
+            {
+                _logger.LogWarning(
+                    "Duplicate enrollment attempt Student {StudentId} already in Course {CourseId} (Enrollment {EnrollmentId})",
+                    studentId, courseId, existing.Id);
+
+                return existing;
+            }
+
+            var enrollment = new Enrollment
+            {
+                StudentId = studentId,
+                CourseId = courseId,
+                EnrolledAt = DateTime.UtcNow
+            };
+
+            _context.Enrollments.Add(enrollment);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Enrolled Student {StudentId} in Course {CourseId} Enrollment {EnrollmentId}",
+                studentId, courseId, enrollment.Id);
+
+            return enrollment;
         }
 
-        return Task.FromResult(record);
-    }
-
-    public Task<IReadOnlyList<EnrollmentRecord>> GetAllAsync()
-    {
-        IReadOnlyList<EnrollmentRecord> all = _store.Values.ToList();
-        return Task.FromResult(all);
-    }
-
-    public Task<bool> DeleteAsync(string id)
-    {
-        var removed = _store.Remove(id);
-
-        if (removed)
+        public async Task<Enrollment?> GetByIdAsync(int id)
         {
-            //  LOG LEVEL: Information - State destruction completed successfully
+            var enrollment = await _context.Enrollments
+                .Include(e => e.Student)
+                .Include(e => e.Course)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (enrollment is null)
+            {
+                _logger.LogWarning("Enrollment {EnrollmentId} not found", id);
+            }
+
+            return enrollment;
+        }
+
+        public async Task<IReadOnlyList<Enrollment>> GetAllAsync()
+        {
+            return await _context.Enrollments
+                .Include(e => e.Student)
+                .Include(e => e.Course)
+                .ToListAsync();
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var enrollment = await _context.Enrollments.FindAsync(id);
+
+            if (enrollment is null)
+            {
+                _logger.LogWarning("Delete failed enrollment {EnrollmentId} not found", id);
+                return false;
+            }
+
+            _context.Enrollments.Remove(enrollment);
+            await _context.SaveChangesAsync();
+
             _logger.LogInformation("Deleted enrollment {EnrollmentId}", id);
+            return true;
         }
-        else
-        {
-            //  LOG LEVEL: Warning - Attempted deletion on an unresolvable domain entity
-            _logger.LogWarning("Delete failed enrollment {EnrollmentId} not found", id);
-        }
-
-        return Task.FromResult(removed);
     }
 }
-
-// 3. Immutable Data Manifest DTO Shape
-public record EnrollmentRecord(
-    string Id,
-    string StudentId,
-    string CourseCode,
-    DateTime EnrolledAt);
