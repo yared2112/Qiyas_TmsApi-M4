@@ -45,8 +45,11 @@ namespace TmsApi.Controllers
 
             // Proceed to enroll the student
             var enrollment = await _enrollmentService.CreateAsync(courseId, request, ct);
-            return CreatedAtAction(nameof(GetEnrollment), new { courseId, id = enrollment.Id }, enrollment);
+            return CreatedAtAction(
+                nameof(GetEnrollment),
+                new { courseId, id = enrollment.Id },
+                enrollment
+            );
         }
-
     }
 }

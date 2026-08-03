@@ -25,7 +25,6 @@ namespace TmsApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCourse(CreateCourseRequest request, CancellationToken ct)
         {
-            // Step 1: Check if the code already exists
             if (await _courseService.CodeExistsAsync(request.Code, ct))
             {
                 return Conflict(new ProblemDetails
@@ -36,9 +35,16 @@ namespace TmsApi.Controllers
                 });
             }
 
-            // Step 2: If not duplicate, create the course
             var result = await _courseService.CreateAsync(request, ct);
             return CreatedAtAction(nameof(GetCourseById), new { id = result.Id }, result);
+        }
+
+        //🔹 New Paginated GET
+        [HttpGet]
+        public async Task<IActionResult> GetCourses([FromQuery] PagedRequest request, CancellationToken ct)
+        {
+            var result = await _courseService.GetCoursesAsync(request, ct);
+            return Ok(result);
         }
     }
 }

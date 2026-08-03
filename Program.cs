@@ -1,27 +1,39 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
+using Serilog;
 using TmsApi.Data;
 using TmsApi.Services;
+using TmsApi.Persistence;
 using TmsApi;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Add DbContext with PostgreSQL
+// 🔹 Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+// 1. Add DbContext with PostgreSQL + EF Core SQL logging routed to Serilog
 builder.Services.AddDbContext<TmsDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("TmsDb")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("TmsDb"))
+           .EnableSensitiveDataLogging()
+           .LogTo(Log.Information, LogLevel.Information));
 
-// 2. Register EnrollmentService
-builder.Services.AddScoped<TmsApi.Services.IEnrollmentService, TmsApi.Services.EnrollmentService>();
-
-
-// 2. Register CourseService
+// 2. Register services
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 
-// 3. Add controllers if you’re using MVC
-builder.Services.AddControllers();
+// 3. Add controllers with global audit filter
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<AuditLogFilter>();
+});
 
-// 3. Add Minimal API
+// 4. Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -35,51 +47,32 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Enable swagger and developer exception page in development environment
+// 🔹 Development-only middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "TMS API v1");
-        c.RoutePrefix = string.Empty; // serve Swagger UI at root (https://localhost:5247/)
+        c.RoutePrefix = string.Empty;
     });
     app.UseDeveloperExceptionPage();
+
+    // Run seeder
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<TmsDbContext>();
+    await DataSeeder.SeedAsync(context);
 }
 
-app.UseHttpsRedirection();
+// Only enforce HTTPS redirection outside of local development environments
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthorization();
 
 // 5. Map endpoints
-app.MapControllers(); // If using MVC controllers
-// Minimal API example
+app.MapControllers();
 app.MapGet("/", () => "TMS API is running");
-
-// Get all enrollments
-// app.MapGet("/enrollments", async (IEnrollmentServices service) =>
-// {
-//     return await service.GetAllAsync();
-// });
-
-// // Get enrollment by Id
-// app.MapGet("/enrollments/{id:int}", async (int id, IEnrollmentServices service) =>
-// {
-//     var record = await service.GetByIdAsync(id);
-//     return record is not null ? Results.Ok(record) : Results.NotFound();
-// });
-
-// // Enroll a student in a course
-// app.MapPost("/enrollments", async (int studentId, int courseCode, IEnrollmentServices service) =>
-// {
-//     var record = await service.EnrollAsync(studentId, courseCode); // Parse studentId, courseCode);
-//     return Results.Created($"/enrollments/{record.Id}", record);
-// });
-
-// // Delete enrollment
-// app.MapDelete("/enrollments/{id:int}", async (int id, IEnrollmentServices service) =>
-// {
-//     var success = await service.DeleteAsync(id);
-//     return success ? Results.Ok() : Results.NotFound();
-// });
 
 app.Run();
