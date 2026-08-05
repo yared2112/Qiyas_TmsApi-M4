@@ -17,22 +17,34 @@ namespace TmsApi.Controllers
             _enrollmentService = enrollmentService;
         }
 
-
+        // 🔹 Single enrollment by ID
         [HttpGet("{id:int}", Name = nameof(GetEnrollment))]
         public async Task<IActionResult> GetEnrollment(int courseId, int id, CancellationToken ct)
         {
-            var enrollment = await _enrollmentService.GetByIdAsync(courseId, id, ct);
+            var enrollment = await _enrollmentService.GetByIdAsync(id, ct);
             return enrollment is not null ? Ok(enrollment) : NotFound();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> EnrollStudent(int courseId, EnrollStudentRequest request, CancellationToken ct)
+        // 🔹 List all enrollments for a course
+        [HttpGet(Name = "ListCourseEnrollments")]
+        public async Task<IActionResult> GetEnrollments(int courseId, CancellationToken ct)
         {
-            // Check if the course exists in the parent table
             var course = await _courseService.GetByIdAsync(courseId, ct);
             if (course is null) return NotFound();
 
-            // Check if the course is full capacity before enrolling the student    
+            var enrollments = await _enrollmentService.GetByCourseAsync(courseId, ct);
+            return Ok(enrollments);
+        }
+
+        // 🔹 Enroll a student
+        [HttpPost]
+        public async Task<IActionResult> EnrollStudent(int courseId, EnrollStudentRequest request, CancellationToken ct)
+        {
+            // Confirm parent course exists
+            var course = await _courseService.GetByIdAsync(courseId, ct);
+            if (course is null) return NotFound();
+
+            // Capacity check
             if (course.EnrollmentCount >= course.MaxCapacity)
             {
                 return Conflict(new ProblemDetails
@@ -43,8 +55,12 @@ namespace TmsApi.Controllers
                 });
             }
 
-            // Proceed to enroll the student
-            var enrollment = await _enrollmentService.CreateAsync(courseId, request, ct);
+            // Ensure request has the correct courseId
+            request = request with { CourseId = courseId };
+
+            // Proceed to enroll
+            var enrollment = await _enrollmentService.CreateAsync(request, ct);
+
             return CreatedAtAction(
                 nameof(GetEnrollment),
                 new { courseId, id = enrollment.Id },

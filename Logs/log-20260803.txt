@@ -202,3 +202,333 @@ SELECT EXISTS (
 2026-08-03 11:25:39.461 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.CreateCourse (TmsApi) in 11.0125ms
 2026-08-03 11:25:39.465 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.CreateCourse (TmsApi)'
 2026-08-03 11:25:39.467 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5247/api/courses - 400 null application/problem+json; charset=utf-8 31.4364ms
+2026-08-03 11:28:31.743 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5247/api/courses - application/json 73
+2026-08-03 11:28:31.753 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.CreateCourse (TmsApi)'
+2026-08-03 11:28:31.754 +03:00 [INF] Route matched with {action = "CreateCourse", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateCourse(TmsApi.Dtos.CreateCourseRequest, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:28:31.787 +03:00 [INF] Executing BadRequestObjectResult, writing value of type 'Microsoft.AspNetCore.Mvc.ValidationProblemDetails'.
+2026-08-03 11:28:31.790 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.CreateCourse (TmsApi) in 32.1757ms
+2026-08-03 11:28:31.792 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.CreateCourse (TmsApi)'
+2026-08-03 11:28:31.794 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5247/api/courses - 400 null application/problem+json; charset=utf-8 51.1747ms
+2026-08-03 11:28:55.444 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5247/api/courses - application/json 73
+2026-08-03 11:28:55.449 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.CreateCourse (TmsApi)'
+2026-08-03 11:28:55.453 +03:00 [INF] Route matched with {action = "CreateCourse", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateCourse(TmsApi.Dtos.CreateCourseRequest, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:28:55.459 +03:00 [INF] TMS API call: POST /api/courses
+2026-08-03 11:28:55.709 +03:00 [INF] Executed DbCommand (40ms) [Parameters=[@code='CSE-101'], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Courses" AS c
+    WHERE c."Code" = @code)
+2026-08-03 11:28:55.713 +03:00 [INF] info: 8/3/2026 11:28:55.713 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (40ms) [Parameters=[@code='CSE-101'], CommandType='Text', CommandTimeout='30']
+      SELECT EXISTS (
+          SELECT 1
+          FROM "Courses" AS c
+          WHERE c."Code" = @code)
+2026-08-03 11:28:55.718 +03:00 [INF] TMS API response: 200
+2026-08-03 11:28:55.721 +03:00 [INF] Executing ConflictObjectResult, writing value of type 'Microsoft.AspNetCore.Mvc.ProblemDetails'.
+2026-08-03 11:28:55.728 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.CreateCourse (TmsApi) in 270.7389ms
+2026-08-03 11:28:55.731 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.CreateCourse (TmsApi)'
+2026-08-03 11:28:55.739 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5247/api/courses - 409 null application/problem+json; charset=utf-8 295.376ms
+2026-08-03 11:31:49.624 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=5&OrderBy=Code&Descending=true - null null
+2026-08-03 11:31:49.647 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:31:49.668 +03:00 [INF] Route matched with {action = "GetCourses", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCourses(TmsApi.Dtos.PagedRequest, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:31:49.689 +03:00 [INF] TMS API call: GET /api/courses
+2026-08-03 11:31:49.864 +03:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Courses" AS c
+2026-08-03 11:31:49.868 +03:00 [INF] info: 8/3/2026 11:31:49.868 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (11ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT count(*)::int
+      FROM "Courses" AS c
+2026-08-03 11:31:49.994 +03:00 [INF] Executed DbCommand (14ms) [Parameters=[@p1='5', @p='0'], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+    SELECT count(*)::int
+    FROM "Enrollments" AS e
+    WHERE c."Id" = e."CourseId")
+FROM "Courses" AS c
+ORDER BY c."Code" DESC
+LIMIT @p1 OFFSET @p
+2026-08-03 11:31:49.997 +03:00 [INF] info: 8/3/2026 11:31:49.996 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (14ms) [Parameters=[@p1='5', @p='0'], CommandType='Text', CommandTimeout='30']
+      SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+          SELECT count(*)::int
+          FROM "Enrollments" AS e
+          WHERE c."Id" = e."CourseId")
+      FROM "Courses" AS c
+      ORDER BY c."Code" DESC
+      LIMIT @p1 OFFSET @p
+2026-08-03 11:31:50.002 +03:00 [INF] TMS API response: 200
+2026-08-03 11:31:50.004 +03:00 [INF] Executing OkObjectResult, writing value of type 'TmsApi.Dtos.PagedResponse`1[[TmsApi.Dtos.CourseResponseDto, TmsApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-03 11:31:50.018 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.GetCourses (TmsApi) in 347.4979ms
+2026-08-03 11:31:50.021 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:31:50.023 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=5&OrderBy=Code&Descending=true - 200 null application/json; charset=utf-8 398.7469ms
+2026-08-03 11:53:11.382 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5247/api/courses/1 - null null
+2026-08-03 11:53:11.397 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.GetCourseById (TmsApi)'
+2026-08-03 11:53:11.411 +03:00 [INF] Route matched with {action = "GetCourseById", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCourseById(Int32, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:53:11.415 +03:00 [INF] TMS API call: GET /api/courses/1
+2026-08-03 11:53:11.505 +03:00 [INF] Executed DbCommand (9ms) [Parameters=[@id='1'], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+    SELECT count(*)::int
+    FROM "Enrollments" AS e
+    WHERE c."Id" = e."CourseId")
+FROM "Courses" AS c
+WHERE c."Id" = @id
+LIMIT 1
+2026-08-03 11:53:11.510 +03:00 [INF] info: 8/3/2026 11:53:11.509 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (9ms) [Parameters=[@id='1'], CommandType='Text', CommandTimeout='30']
+      SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+          SELECT count(*)::int
+          FROM "Enrollments" AS e
+          WHERE c."Id" = e."CourseId")
+      FROM "Courses" AS c
+      WHERE c."Id" = @id
+      LIMIT 1
+2026-08-03 11:53:11.513 +03:00 [INF] TMS API response: 200
+2026-08-03 11:53:11.517 +03:00 [INF] Executing OkObjectResult, writing value of type 'TmsApi.Dtos.CourseResponseDto'.
+2026-08-03 11:53:11.521 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.GetCourseById (TmsApi) in 106.4466ms
+2026-08-03 11:53:11.524 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.GetCourseById (TmsApi)'
+2026-08-03 11:53:11.527 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5247/api/courses/1 - 200 null application/json; charset=utf-8 144.6827ms
+2026-08-03 11:53:39.804 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=5000&OrderBy=Code&Descending=true - null null
+2026-08-03 11:53:39.812 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:53:39.814 +03:00 [INF] Route matched with {action = "GetCourses", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCourses(TmsApi.Dtos.PagedRequest, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:53:39.826 +03:00 [INF] TMS API call: GET /api/courses
+2026-08-03 11:53:39.833 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Courses" AS c
+2026-08-03 11:53:39.837 +03:00 [INF] info: 8/3/2026 11:53:39.837 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT count(*)::int
+      FROM "Courses" AS c
+2026-08-03 11:53:39.848 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p1='50', @p='0'], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+    SELECT count(*)::int
+    FROM "Enrollments" AS e
+    WHERE c."Id" = e."CourseId")
+FROM "Courses" AS c
+ORDER BY c."Code" DESC
+LIMIT @p1 OFFSET @p
+2026-08-03 11:53:39.853 +03:00 [INF] info: 8/3/2026 11:53:39.853 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (2ms) [Parameters=[@p1='50', @p='0'], CommandType='Text', CommandTimeout='30']
+      SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+          SELECT count(*)::int
+          FROM "Enrollments" AS e
+          WHERE c."Id" = e."CourseId")
+      FROM "Courses" AS c
+      ORDER BY c."Code" DESC
+      LIMIT @p1 OFFSET @p
+2026-08-03 11:53:39.855 +03:00 [INF] TMS API response: 200
+2026-08-03 11:53:39.856 +03:00 [INF] Executing OkObjectResult, writing value of type 'TmsApi.Dtos.PagedResponse`1[[TmsApi.Dtos.CourseResponseDto, TmsApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-03 11:53:39.859 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.GetCourses (TmsApi) in 35.9028ms
+2026-08-03 11:53:39.862 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:53:39.863 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=5000&OrderBy=Code&Descending=true - 200 null application/json; charset=utf-8 59.1645ms
+2026-08-03 11:53:57.275 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=5&OrderBy=Code&Descending=true - null null
+2026-08-03 11:53:57.296 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:53:57.298 +03:00 [INF] Route matched with {action = "GetCourses", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCourses(TmsApi.Dtos.PagedRequest, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:53:57.302 +03:00 [INF] TMS API call: GET /api/courses
+2026-08-03 11:53:57.306 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Courses" AS c
+2026-08-03 11:53:57.311 +03:00 [INF] info: 8/3/2026 11:53:57.311 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT count(*)::int
+      FROM "Courses" AS c
+2026-08-03 11:53:57.315 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@p1='5', @p='0'], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+    SELECT count(*)::int
+    FROM "Enrollments" AS e
+    WHERE c."Id" = e."CourseId")
+FROM "Courses" AS c
+ORDER BY c."Code" DESC
+LIMIT @p1 OFFSET @p
+2026-08-03 11:53:57.321 +03:00 [INF] info: 8/3/2026 11:53:57.321 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (1ms) [Parameters=[@p1='5', @p='0'], CommandType='Text', CommandTimeout='30']
+      SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+          SELECT count(*)::int
+          FROM "Enrollments" AS e
+          WHERE c."Id" = e."CourseId")
+      FROM "Courses" AS c
+      ORDER BY c."Code" DESC
+      LIMIT @p1 OFFSET @p
+2026-08-03 11:53:57.323 +03:00 [INF] TMS API response: 200
+2026-08-03 11:53:57.325 +03:00 [INF] Executing OkObjectResult, writing value of type 'TmsApi.Dtos.PagedResponse`1[[TmsApi.Dtos.CourseResponseDto, TmsApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-03 11:53:57.327 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.GetCourses (TmsApi) in 26.4646ms
+2026-08-03 11:53:57.330 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:53:57.331 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=5&OrderBy=Code&Descending=true - 200 null application/json; charset=utf-8 55.9317ms
+2026-08-03 11:54:18.078 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=10&Search=fnd&OrderBy=Code&Descending=true - null null
+2026-08-03 11:54:18.098 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:54:18.103 +03:00 [INF] Route matched with {action = "GetCourses", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCourses(TmsApi.Dtos.PagedRequest, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:54:18.108 +03:00 [INF] TMS API call: GET /api/courses
+2026-08-03 11:54:18.158 +03:00 [INF] Executed DbCommand (8ms) [Parameters=[@Format='%fnd%', @Format0='%fnd%'], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Courses" AS c
+WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+2026-08-03 11:54:18.162 +03:00 [INF] info: 8/3/2026 11:54:18.162 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (8ms) [Parameters=[@Format='%fnd%', @Format0='%fnd%'], CommandType='Text', CommandTimeout='30']
+      SELECT count(*)::int
+      FROM "Courses" AS c
+      WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+2026-08-03 11:54:18.174 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@Format='%fnd%', @Format0='%fnd%', @p5='10', @p='0'], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+    SELECT count(*)::int
+    FROM "Enrollments" AS e
+    WHERE c."Id" = e."CourseId")
+FROM "Courses" AS c
+WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+ORDER BY c."Code" DESC
+LIMIT @p5 OFFSET @p
+2026-08-03 11:54:18.181 +03:00 [INF] info: 8/3/2026 11:54:18.181 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (2ms) [Parameters=[@Format='%fnd%', @Format0='%fnd%', @p5='10', @p='0'], CommandType='Text', CommandTimeout='30']
+      SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+          SELECT count(*)::int
+          FROM "Enrollments" AS e
+          WHERE c."Id" = e."CourseId")
+      FROM "Courses" AS c
+      WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+      ORDER BY c."Code" DESC
+      LIMIT @p5 OFFSET @p
+2026-08-03 11:54:18.185 +03:00 [INF] TMS API response: 200
+2026-08-03 11:54:18.187 +03:00 [INF] Executing OkObjectResult, writing value of type 'TmsApi.Dtos.PagedResponse`1[[TmsApi.Dtos.CourseResponseDto, TmsApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-03 11:54:18.191 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.GetCourses (TmsApi) in 84.9976ms
+2026-08-03 11:54:18.193 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:54:18.195 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=10&Search=fnd&OrderBy=Code&Descending=true - 200 null application/json; charset=utf-8 117.7687ms
+2026-08-03 11:54:29.059 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=10&Search=101&OrderBy=Code&Descending=true - null null
+2026-08-03 11:54:29.085 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:54:29.087 +03:00 [INF] Route matched with {action = "GetCourses", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCourses(TmsApi.Dtos.PagedRequest, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:54:29.092 +03:00 [INF] TMS API call: GET /api/courses
+2026-08-03 11:54:29.098 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@Format='%101%', @Format0='%101%'], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Courses" AS c
+WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+2026-08-03 11:54:29.102 +03:00 [INF] info: 8/3/2026 11:54:29.102 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (1ms) [Parameters=[@Format='%101%', @Format0='%101%'], CommandType='Text', CommandTimeout='30']
+      SELECT count(*)::int
+      FROM "Courses" AS c
+      WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+2026-08-03 11:54:29.105 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@Format='%101%', @Format0='%101%', @p5='10', @p='0'], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+    SELECT count(*)::int
+    FROM "Enrollments" AS e
+    WHERE c."Id" = e."CourseId")
+FROM "Courses" AS c
+WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+ORDER BY c."Code" DESC
+LIMIT @p5 OFFSET @p
+2026-08-03 11:54:29.110 +03:00 [INF] info: 8/3/2026 11:54:29.110 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (1ms) [Parameters=[@Format='%101%', @Format0='%101%', @p5='10', @p='0'], CommandType='Text', CommandTimeout='30']
+      SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+          SELECT count(*)::int
+          FROM "Enrollments" AS e
+          WHERE c."Id" = e."CourseId")
+      FROM "Courses" AS c
+      WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+      ORDER BY c."Code" DESC
+      LIMIT @p5 OFFSET @p
+2026-08-03 11:54:29.112 +03:00 [INF] TMS API response: 200
+2026-08-03 11:54:29.113 +03:00 [INF] Executing OkObjectResult, writing value of type 'TmsApi.Dtos.PagedResponse`1[[TmsApi.Dtos.CourseResponseDto, TmsApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-03 11:54:29.116 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.GetCourses (TmsApi) in 25.0044ms
+2026-08-03 11:54:29.119 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:54:29.121 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=10&Search=101&OrderBy=Code&Descending=true - 200 null application/json; charset=utf-8 61.8307ms
+2026-08-03 11:54:56.554 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=10&Search=intro&OrderBy=Code&Descending=true - null null
+2026-08-03 11:54:56.560 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:54:56.562 +03:00 [INF] Route matched with {action = "GetCourses", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCourses(TmsApi.Dtos.PagedRequest, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:54:56.576 +03:00 [INF] TMS API call: GET /api/courses
+2026-08-03 11:54:56.582 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@Format='%intro%', @Format0='%intro%'], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Courses" AS c
+WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+2026-08-03 11:54:56.586 +03:00 [INF] info: 8/3/2026 11:54:56.586 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (1ms) [Parameters=[@Format='%intro%', @Format0='%intro%'], CommandType='Text', CommandTimeout='30']
+      SELECT count(*)::int
+      FROM "Courses" AS c
+      WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+2026-08-03 11:54:56.591 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@Format='%intro%', @Format0='%intro%', @p5='10', @p='0'], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+    SELECT count(*)::int
+    FROM "Enrollments" AS e
+    WHERE c."Id" = e."CourseId")
+FROM "Courses" AS c
+WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+ORDER BY c."Code" DESC
+LIMIT @p5 OFFSET @p
+2026-08-03 11:54:56.595 +03:00 [INF] info: 8/3/2026 11:54:56.595 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (1ms) [Parameters=[@Format='%intro%', @Format0='%intro%', @p5='10', @p='0'], CommandType='Text', CommandTimeout='30']
+      SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+          SELECT count(*)::int
+          FROM "Enrollments" AS e
+          WHERE c."Id" = e."CourseId")
+      FROM "Courses" AS c
+      WHERE c."Title" ILIKE @Format ESCAPE '' OR c."Code" ILIKE @Format0 ESCAPE ''
+      ORDER BY c."Code" DESC
+      LIMIT @p5 OFFSET @p
+2026-08-03 11:54:56.596 +03:00 [INF] TMS API response: 200
+2026-08-03 11:54:56.598 +03:00 [INF] Executing OkObjectResult, writing value of type 'TmsApi.Dtos.PagedResponse`1[[TmsApi.Dtos.CourseResponseDto, TmsApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-03 11:54:56.600 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.GetCourses (TmsApi) in 27.5853ms
+2026-08-03 11:54:56.603 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:54:56.605 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=10&Search=intro&OrderBy=Code&Descending=true - 200 null application/json; charset=utf-8 50.9656ms
+2026-08-03 11:55:11.728 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=10&Descending=true - null null
+2026-08-03 11:55:11.737 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:55:11.742 +03:00 [INF] Route matched with {action = "GetCourses", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCourses(TmsApi.Dtos.PagedRequest, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:55:11.748 +03:00 [INF] TMS API call: GET /api/courses
+2026-08-03 11:55:11.752 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Courses" AS c
+2026-08-03 11:55:11.758 +03:00 [INF] info: 8/3/2026 11:55:11.758 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT count(*)::int
+      FROM "Courses" AS c
+2026-08-03 11:55:11.772 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p1='10', @p='0'], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+    SELECT count(*)::int
+    FROM "Enrollments" AS e
+    WHERE c."Id" = e."CourseId")
+FROM "Courses" AS c
+ORDER BY c."Title" DESC
+LIMIT @p1 OFFSET @p
+2026-08-03 11:55:11.777 +03:00 [INF] info: 8/3/2026 11:55:11.777 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (2ms) [Parameters=[@p1='10', @p='0'], CommandType='Text', CommandTimeout='30']
+      SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+          SELECT count(*)::int
+          FROM "Enrollments" AS e
+          WHERE c."Id" = e."CourseId")
+      FROM "Courses" AS c
+      ORDER BY c."Title" DESC
+      LIMIT @p1 OFFSET @p
+2026-08-03 11:55:11.778 +03:00 [INF] TMS API response: 200
+2026-08-03 11:55:11.780 +03:00 [INF] Executing OkObjectResult, writing value of type 'TmsApi.Dtos.PagedResponse`1[[TmsApi.Dtos.CourseResponseDto, TmsApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-03 11:55:11.785 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.GetCourses (TmsApi) in 38.0008ms
+2026-08-03 11:55:11.787 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:55:11.791 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=10&Descending=true - 200 null application/json; charset=utf-8 62.3159ms
+2026-08-03 11:55:57.091 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=10&OrderBy=code&Descending=true - null null
+2026-08-03 11:55:57.195 +03:00 [INF] Executing endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:55:57.196 +03:00 [INF] Route matched with {action = "GetCourses", controller = "Courses"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCourses(TmsApi.Dtos.PagedRequest, System.Threading.CancellationToken) on controller TmsApi.Controllers.CoursesController (TmsApi).
+2026-08-03 11:55:57.201 +03:00 [INF] TMS API call: GET /api/courses
+2026-08-03 11:55:57.205 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Courses" AS c
+2026-08-03 11:55:57.208 +03:00 [INF] info: 8/3/2026 11:55:57.208 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT count(*)::int
+      FROM "Courses" AS c
+2026-08-03 11:55:57.212 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@p1='10', @p='0'], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+    SELECT count(*)::int
+    FROM "Enrollments" AS e
+    WHERE c."Id" = e."CourseId")
+FROM "Courses" AS c
+ORDER BY c."Title" DESC
+LIMIT @p1 OFFSET @p
+2026-08-03 11:55:57.215 +03:00 [INF] info: 8/3/2026 11:55:57.215 RelationalEventId.CommandExecuted[20101] (Microsoft.EntityFrameworkCore.Database.Command) 
+      Executed DbCommand (1ms) [Parameters=[@p1='10', @p='0'], CommandType='Text', CommandTimeout='30']
+      SELECT c."Id", c."Code", c."Title", c."MaxCapacity", (
+          SELECT count(*)::int
+          FROM "Enrollments" AS e
+          WHERE c."Id" = e."CourseId")
+      FROM "Courses" AS c
+      ORDER BY c."Title" DESC
+      LIMIT @p1 OFFSET @p
+2026-08-03 11:55:57.216 +03:00 [INF] TMS API response: 200
+2026-08-03 11:55:57.217 +03:00 [INF] Executing OkObjectResult, writing value of type 'TmsApi.Dtos.PagedResponse`1[[TmsApi.Dtos.CourseResponseDto, TmsApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-03 11:55:57.219 +03:00 [INF] Executed action TmsApi.Controllers.CoursesController.GetCourses (TmsApi) in 18.5715ms
+2026-08-03 11:55:57.220 +03:00 [INF] Executed endpoint 'TmsApi.Controllers.CoursesController.GetCourses (TmsApi)'
+2026-08-03 11:55:57.222 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5247/api/courses?Page=1&PageSize=10&OrderBy=code&Descending=true - 200 null application/json; charset=utf-8 130.3483ms
+2026-08-03 11:57:10.494 +03:00 [INF] Application is shutting down...

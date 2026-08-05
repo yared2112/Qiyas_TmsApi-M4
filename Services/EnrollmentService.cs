@@ -16,10 +16,10 @@ namespace TmsApi.Services
             _logger = logger;
         }
 
-        public Task<EnrollmentResponseDto?> GetByIdAsync(int courseId, int id, CancellationToken ct) =>
+        public Task<EnrollmentResponseDto?> GetByIdAsync(int id, CancellationToken ct) =>
             _context.Enrollments
                 .AsNoTracking()
-                .Where(e => e.Id == id && e.CourseId == courseId)
+                .Where(e => e.Id == id)
                 .Select(e => new EnrollmentResponseDto(
                     e.Id,
                     e.CourseId,
@@ -28,11 +28,11 @@ namespace TmsApi.Services
                 ))
                 .FirstOrDefaultAsync(ct);
 
-        public async Task<EnrollmentResponseDto> CreateAsync(int courseId, EnrollStudentRequest request, CancellationToken ct)
+        public async Task<EnrollmentResponseDto> CreateAsync(EnrollStudentRequest request, CancellationToken ct)
         {
             var enrollment = new Enrollment
             {
-                CourseId = courseId,
+                CourseId = request.CourseId,
                 StudentId = request.StudentId,
                 EnrolledAt = DateTime.UtcNow
             };
@@ -40,9 +40,22 @@ namespace TmsApi.Services
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync(ct);
 
-            _logger.LogInformation("Student {StudentId} enrolled in course {CourseId}", request.StudentId, courseId);
+            _logger.LogInformation("Student {StudentId} enrolled in course {CourseId}", request.StudentId, request.CourseId);
 
-            return (await GetByIdAsync(courseId, enrollment.Id, ct))!;
+            return (await GetByIdAsync(enrollment.Id, ct))!;
+        }
+
+        public async Task<List<EnrollmentResponseDto>> GetByCourseAsync(int courseId, CancellationToken ct)
+        {
+            return await _context.Enrollments
+                .AsNoTracking()
+                .Where(e => e.CourseId == courseId)
+                .Select(e => new EnrollmentResponseDto(
+                    e.Id,
+                    e.CourseId,
+                    e.StudentId,
+                    e.EnrolledAt))
+                .ToListAsync(ct);
         }
     }
 }

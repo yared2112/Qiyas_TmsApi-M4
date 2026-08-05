@@ -48,6 +48,7 @@ namespace TmsApi.Services
         {
             IQueryable<Entities.Course> query = _context.Courses.AsNoTracking();
 
+            // Apply search filter if provided
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 query = query.Where(c =>
@@ -55,15 +56,26 @@ namespace TmsApi.Services
                     EF.Functions.ILike(c.Code, $"%{request.Search}%"));
             }
 
+            // Apply sorting or count before paging
             var totalCount = await query.CountAsync(ct);
 
+            // orderBy whitelist with Title as default
             query = request.OrderBy switch
             {
-                "Code" => request.Descending ? query.OrderByDescending(c => c.Code) : query.OrderBy(c => c.Code),
-                "MaxCapacity" => request.Descending ? query.OrderByDescending(c => c.MaxCapacity) : query.OrderBy(c => c.MaxCapacity),
-                _ => request.Descending ? query.OrderByDescending(c => c.Title) : query.OrderBy(c => c.Title)
+                "Code" => request.Descending
+                ? query.OrderByDescending(c => c.Code)
+                : query.OrderBy(c => c.Code),
+
+                "MaxCapacity" => request.Descending
+                ? query.OrderByDescending(c => c.MaxCapacity)
+                : query.OrderBy(c => c.MaxCapacity),
+
+                _ => request.Descending
+                ? query.OrderByDescending(c => c.Title)
+                : query.OrderBy(c => c.Title)
             };
 
+            // Apply paging and projection to DTO
             var items = await query
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
