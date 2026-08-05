@@ -6,6 +6,9 @@ namespace TmsApi.Controllers
 {
     [ApiController]
     [Route("api/courses")]
+    [Tags("Courses")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public class CoursesController : ControllerBase
     {
         private readonly ICourseService _courseService;
@@ -17,14 +20,12 @@ namespace TmsApi.Controllers
             _linkGenerator = linkGenerator;
         }
 
-        // [HttpGet("{id:int}", Name = nameof(GetCourseById))]
-        // public async Task<IActionResult> GetCourseById(int id, CancellationToken ct)
-        // {
-        //     var course = await _courseService.GetByIdAsync(id, ct);
-        //     return course is not null ? Ok(course) : NotFound();
-        // }
-
+        // GET by ID with HATEOAS links
         [HttpGet("{id:int}", Name = nameof(GetCourseById))]
+        [ProducesResponseType(typeof(CourseDetailDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [EndpointSummary("Get a course by ID")]
+        [EndpointDescription("Returns course details with HATEOAS links. Returns 404 if the course does not exist.")]
         public async Task<IActionResult> GetCourseById(int id, CancellationToken ct)
         {
             var course = await _courseService.GetByIdAsync(id, ct);
@@ -84,6 +85,11 @@ namespace TmsApi.Controllers
 
 
         [HttpPost]
+        [ProducesResponseType(typeof(CourseResponseDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [EndpointSummary("Create a new course")]
+        [EndpointDescription("Creates a course with a unique code. Returns 409 if the course code already exists.")]
         public async Task<IActionResult> CreateCourse(CreateCourseRequest request, CancellationToken ct)
         {
             if (await _courseService.CodeExistsAsync(request.Code, ct))
@@ -102,6 +108,9 @@ namespace TmsApi.Controllers
 
         //🔹 New Paginated GET
         [HttpGet]
+        [ProducesResponseType(typeof(PagedResponse<CourseResponseDto>), StatusCodes.Status200OK)]
+        [EndpointSummary("Get a list of courses with pagination")]
+        [EndpointDescription("Returns a paginated, optionally filtered list of TMS courses. PageSize is capped at 50.")]
         public async Task<IActionResult> GetCourses([FromQuery] PagedRequest request, CancellationToken ct)
         {
             var result = await _courseService.GetCoursesAsync(request, ct);
